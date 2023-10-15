@@ -1,0 +1,26 @@
+version: 1.0.0
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/<your-database-name>
+    username: <your-username>
+    password: <your-password>
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level:
+    org:
+      springframework:
+        security=TRACE:
+
+jwt:
+  secret: <your-very-very-very-secret-word>
+
+cors:
+  allowed-origins:
+    - <your-frontend-url>
