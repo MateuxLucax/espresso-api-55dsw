@@ -23,21 +23,13 @@ class Artisan(
     @Size(min = 2, max = 255, message = "Email must be between 2 and 255 characters")
     val email: String,
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "hashed_password")
     @Size(min = 2, max = 255, message = "Password must be between 2 and 255 characters")
     val hashedPassword: String,
 
     @Column(nullable = false)
     @Size(min = 2, max = 255, message = "Salt must be between 2 and 255 characters")
     val salt: String,
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "artisan_favorite_recipe",
-        joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "recipe_id")]
-    )
-    val favoriteRecipes: Set<Recipe> = emptySet(),
 ): UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return mutableListOf(

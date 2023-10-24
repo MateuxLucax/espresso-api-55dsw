@@ -1,39 +1,30 @@
-package dev.mateux.espresso.domain.recipe
+package dev.mateux.espresso.domain.artisan.favorite
 
 import dev.mateux.espresso.domain.artisan.Artisan
+import dev.mateux.espresso.domain.recipe.Recipe
 import jakarta.persistence.*
-import jakarta.validation.constraints.Size
 import java.util.*
 
-@Entity
-class Recipe(
+@Entity(name = "artisan_favorite")
+class ArtisanFavorite(
     @Id
     @GeneratedValue(generator = "UUID", strategy = GenerationType.AUTO)
     @Column(updatable = false, unique = true, nullable = false)
     val id: UUID,
 
-    @Column(nullable = false)
-    @Size(min = 2, max = 255, message = "Name must be between 2 and 255 characters")
-    val name: String,
-
-    @Column(nullable = false)
-    @Lob
-    val description: String,
-
-    @Column(columnDefinition = "BOOLEAN DEFAULT false")
-    val public: Boolean,
-
-    @Column(nullable = false)
-    val servings: Int,
-
     @ManyToOne
     @JoinColumn(name = "artisan_id")
-    val owner: Artisan,
+    val artisan: Artisan,
+
+    @ManyToOne
+    @JoinColumn(name = "recipe_id")
+    val recipe: Recipe,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        if (other !is Artisan) return false
+
+        other as ArtisanFavorite
 
         return id == other.id
     }
