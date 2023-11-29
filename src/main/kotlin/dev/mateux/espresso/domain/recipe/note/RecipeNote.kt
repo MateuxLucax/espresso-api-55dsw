@@ -7,6 +7,7 @@ import java.util.*
 
 @Entity(name = "recipe_note")
 class RecipeNote(
+    @Id
     @GeneratedValue(generator = "UUID", strategy = GenerationType.AUTO)
     @Column(updatable = false, unique = true, nullable = false)
     val id: UUID,

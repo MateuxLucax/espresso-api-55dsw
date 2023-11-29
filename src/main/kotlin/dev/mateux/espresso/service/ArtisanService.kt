@@ -19,9 +19,10 @@ class ArtisanService(
             email = email,
             hashedPassword = password,
             name = name,
-            favoriteRecipes = emptySet(),
             salt = salt,
         )
         return artisanRepository.save(artisan)
     }
+
+    fun getAllArtisans(): List<Artisan> = artisanRepository.findAll()
 }

@@ -25,7 +25,7 @@ class AuthController(
     fun login(@RequestBody payload: LoginDTO): LoginResponseDTO {
         val artisan = artisanService.getArtisanByEmail(payload.email)
             ?: throw ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
+                HttpStatus.NOT_FOUND,
                 "Email not found. Please check your email and try again."
             )
 
@@ -45,8 +45,23 @@ class AuthController(
 
     @PostMapping("register")
     fun register(@RequestBody payload: RegisterDTO): LoginResponseDTO {
-        val artisan = artisanService.getArtisanByEmail(payload.email)
+        val passwordRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}\$")
+        if (!passwordRegex.matches(payload.password)) {
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+            )
+        }
 
+        val emailRegex = Regex("^[A-Za-z0-9+_.-]+@(.+)\$")
+        if (!emailRegex.matches(payload.email)) {
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Email is invalid. Please try again."
+            )
+        }
+
+        val artisan = artisanService.getArtisanByEmail(payload.email)
         if (artisan != null) {
             throw ResponseStatusException(
                 HttpStatus.CONFLICT,
@@ -56,7 +71,6 @@ class AuthController(
 
         val salt = hashService.generateSalt()
         val hashedPassword = hashService.hashPassword(payload.email, payload.password, salt)
-
         val newArtisan = artisanService.createArtisan(
             email = payload.email,
             password = hashedPassword,
