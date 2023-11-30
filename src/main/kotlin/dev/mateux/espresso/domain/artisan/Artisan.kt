@@ -1,19 +1,17 @@
 package dev.mateux.espresso.domain.artisan
 
-import dev.mateux.espresso.domain.recipe.Recipe
 import jakarta.persistence.*
 import jakarta.validation.constraints.Size
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import java.util.*
 
 @Entity
 class Artisan(
     @Id
-    @GeneratedValue(generator = "UUID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, unique = true, nullable = false)
-    val id: UUID,
+    val id: Long? = null,
 
     @Column(nullable = false)
     @Size(min = 2, max = 255, message = "Name must be between 2 and 255 characters")

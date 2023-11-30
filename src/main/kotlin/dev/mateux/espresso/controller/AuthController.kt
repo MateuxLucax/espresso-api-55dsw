@@ -1,11 +1,11 @@
 package dev.mateux.espresso.controller
 
-import dev.mateux.espresso.service.TokenService
-import dev.mateux.espresso.dto.LoginDTO
-import dev.mateux.espresso.dto.LoginResponseDTO
-import dev.mateux.espresso.dto.RegisterDTO
+import dev.mateux.espresso.dto.auth.LoginDTO
+import dev.mateux.espresso.dto.auth.LoginResponseDTO
+import dev.mateux.espresso.dto.auth.RegisterDTO
 import dev.mateux.espresso.service.ArtisanService
 import dev.mateux.espresso.service.HashService
+import dev.mateux.espresso.service.TokenService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

@@ -1,4 +1,4 @@
-package dev.mateux.espresso.dto
+package dev.mateux.espresso.dto.artisan
 
 data class ArtisanDTO(
     val id: String,

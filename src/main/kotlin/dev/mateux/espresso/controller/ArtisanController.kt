@@ -1,6 +1,6 @@
 package dev.mateux.espresso.controller
 
-import dev.mateux.espresso.dto.ArtisanDTO
+import dev.mateux.espresso.dto.artisan.ArtisanDTO
 import dev.mateux.espresso.service.ArtisanService
 import dev.mateux.espresso.toArtisan
 import org.springframework.security.core.Authentication

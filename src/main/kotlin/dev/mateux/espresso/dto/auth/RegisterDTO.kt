@@ -1,4 +1,4 @@
-package dev.mateux.espresso.dto
+package dev.mateux.espresso.dto.auth
 
 data class RegisterDTO(
     val email: String,

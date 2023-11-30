@@ -5,8 +5,8 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface ArtisanRepository: JpaRepository<Artisan, UUID> {
-    override fun findById(uuid: UUID): Optional<Artisan>
+interface ArtisanRepository: JpaRepository<Artisan, Long> {
+    override fun findById(ic: Long): Optional<Artisan>
 
     fun findByEmail(email: String): Artisan?
 }

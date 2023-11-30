@@ -3,27 +3,23 @@ package dev.mateux.espresso.domain.artisan.favorite
 import dev.mateux.espresso.domain.artisan.Artisan
 import dev.mateux.espresso.domain.recipe.Recipe
 import jakarta.persistence.*
-import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
-import java.sql.Timestamp
 import java.time.Instant
-import java.util.*
 
 @Entity(name = "artisan_favorite")
 class ArtisanFavorite(
     @Id
-    @GeneratedValue(generator = "UUID", strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, unique = true, nullable = false)
-    val id: UUID,
+    val id: Long? = null,
 
     @ManyToOne
-    @JoinColumn(name = "artisan_id")
+    @JoinColumn(name = "artisan_id", referencedColumnName = "id", nullable = false, updatable = false)
     val artisan: Artisan,
 
     @ManyToOne
-    @JoinColumn(name = "recipe_id")
+    @JoinColumn(name = "recipe_id", referencedColumnName = "id", nullable = false, updatable = false)
     val recipe: Recipe,
 
     @Column(nullable = false, name = "created_at")
