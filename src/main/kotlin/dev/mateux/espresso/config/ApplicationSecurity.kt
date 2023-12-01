@@ -23,6 +23,7 @@ class ApplicationSecurity (
     fun configure(http: HttpSecurity): SecurityFilterChain {
         http.authorizeHttpRequests { it
             .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/public/**").permitAll()
             .requestMatchers("/").permitAll()
             .anyRequest().authenticated()
         }.oauth2ResourceServer { oauthCustomizer ->

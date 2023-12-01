@@ -19,8 +19,8 @@ class RecipeService(
     private val recipeStepRepository: RecipeStepRepository,
     private val brewMethodRepository: BrewMethodRepository
 ) {
-    fun getById(id: Long): RecipeDTO {
-        val recipe = recipeRepository.findById(id).orElseThrow()
+    fun getById(id: Long, artisanId: Long): RecipeDTO {
+        val recipe = recipeRepository.findByIdAndArtisan(id, artisanId) ?: throw Exception("Recipe not found.")
         val steps = recipeStepRepository.findByRecipeId(id)
 
         return RecipeDTO(

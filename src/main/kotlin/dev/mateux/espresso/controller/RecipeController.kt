@@ -37,9 +37,10 @@ class RecipeController(
     }
 
     @GetMapping("{id}")
-    fun getById(@PathVariable(required = true) id: String): RecipeDTO {
+    fun getById(@PathVariable(required = true) id: String, authentication: Authentication): RecipeDTO {
         try {
-            return recipeService.getById(id.toLong())
+            val artisanId = authentication.toArtisan().id ?: throw Exception("Artisan not found.")
+            return recipeService.getById(id.toLong(), artisanId)
         } catch (e: Exception) {
             if (e.message == "Recipe not found.") {
                 throw ResponseStatusException(
