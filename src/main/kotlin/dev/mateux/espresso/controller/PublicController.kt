@@ -2,9 +2,7 @@ package dev.mateux.espresso.controller
 
 import dev.mateux.espresso.dto.recipe.RecipeDTO
 import dev.mateux.espresso.service.PublicService
-import dev.mateux.espresso.toArtisan
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -34,4 +32,17 @@ class PublicController(
                 )
             }
         }
-    }}
+    }
+
+    @GetMapping("recipe/all")
+    fun getAll(): List<RecipeDTO> {
+        try {
+            return publicService.getAllRecipes()
+        } catch (e: Exception) {
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Unable to get recipes. Please try again."
+            )
+        }
+    }
+}

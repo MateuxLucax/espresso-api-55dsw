@@ -1,8 +1,9 @@
 package dev.mateux.espresso.controller
 
-import dev.mateux.espresso.dto.method.BrewMethodDTO
 import dev.mateux.espresso.service.BrewMethodService
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("brew/methods")

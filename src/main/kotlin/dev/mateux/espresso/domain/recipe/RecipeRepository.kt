@@ -19,4 +19,19 @@ interface RecipeRepository: JpaRepository<Recipe, Long> {
            AND public = true
     """, nativeQuery = true)
     fun findPublicById(id: Long): Recipe?
+
+    @Query("""
+        SELECT *
+          FROM recipe
+         WHERE artisan_id = :artisanId
+           AND ((public = true) OR (public = false AND artisan_id = :artisanId))
+    """, nativeQuery = true)
+    fun findAllPublicAndFromArtisan(artisanId: Long): List<Recipe>
+
+    @Query("""
+        SELECT *
+          FROM recipe
+         WHERE public = true
+    """, nativeQuery = true)
+    fun findAllPublic(): List<Recipe>
 }
