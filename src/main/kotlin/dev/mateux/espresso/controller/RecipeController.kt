@@ -22,10 +22,17 @@ class RecipeController(
         try {
             return recipeService.createRecipe(recipeDTO, artisan)
         } catch (e: Exception) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Unable to create recipe. Please try again."
-            )
+            if (e.message == "Brew method not found") {
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Brew method not found. Please try again."
+                )
+            } else {
+                throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Unable to create recipe. Please try again."
+                )
+            }
         }
     }
 

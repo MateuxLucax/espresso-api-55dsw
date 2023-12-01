@@ -1,5 +1,7 @@
-package dev.mateux.espresso.domain.method
+package dev.mateux.espresso.seeders
 
+import dev.mateux.espresso.domain.method.BrewMethod
+import dev.mateux.espresso.domain.method.BrewMethodRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
@@ -19,15 +21,13 @@ class BrewMethodSeeder(
             BrewMethod(title = "Siphon"),
             BrewMethod(title = "Hario V60"),
             BrewMethod(title = "Kalita Wave"),
-            BrewMethod(title = "Melitta"),
+            BrewMethod(title = "Melitta")
         )
     }
 
     override fun run(vararg args: String) {
-        val alreadySeeded = brewMethodRepository.findAll()
-        if (alreadySeeded.isNotEmpty()) {
-            return
-        }
+        val count = brewMethodRepository.count()
+        if (count > 0) return
 
         brewMethodRepository.saveAll(brewMethods)
     }

@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.Query
 interface BrewMethodRepository: JpaRepository<BrewMethod, Long> {
     @Query("""
         SELECT id,
-               title,
-               similarity(title, :name) AS similarity
+               title
           FROM brew_method
          WHERE similarity(title, :name) > 0.3
       ORDER BY 3 DESC

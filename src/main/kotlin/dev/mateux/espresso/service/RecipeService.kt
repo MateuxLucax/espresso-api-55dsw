@@ -87,9 +87,7 @@ class RecipeService(
    }
 
     fun getMethod(method: String): BrewMethod {
-        return brewMethodRepository.getBySimilarityName(method) ?: BrewMethod(
-            title = method,
-        )
+        return brewMethodRepository.getBySimilarityName(method) ?: throw Exception("Brew method not found")
     }
 
     fun extractQuantityAndType(text: String): Pair<Float, String> {
