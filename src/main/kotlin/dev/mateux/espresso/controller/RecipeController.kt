@@ -68,4 +68,17 @@ class RecipeController(
             )
         }
     }
+
+    @GetMapping("mine")
+    fun getMine(authentication: Authentication): List<RecipeDTO> {
+        try {
+            val artisanId = authentication.toArtisan().id ?: throw Exception("Artisan not found.")
+            return recipeService.getRecipesFromArtisan(artisanId)
+        } catch (e: Exception) {
+            throw ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Unable to get recipes. Please try again."
+            )
+        }
+    }
 }

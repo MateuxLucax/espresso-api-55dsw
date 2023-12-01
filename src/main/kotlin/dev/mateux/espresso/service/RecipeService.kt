@@ -59,6 +59,23 @@ class RecipeService(
         }
     }
 
+    fun getRecipesFromArtisan(artisanId: Long): List<RecipeDTO> {
+        val recipes = recipeRepository.findAllFromArtisan(artisanId)
+
+        return recipes.map { recipe ->
+            RecipeDTO(
+                id = recipe.id.toString(),
+                title = recipe.title,
+                description = recipe.description,
+                method = recipe.method.title,
+                cups = recipe.servings,
+                steps = listOf(),
+                public = recipe.public,
+                owner = recipe.owner.id.toString(),
+            )
+        }
+    }
+
     fun createRecipe(createRecipeDTO: CreateRecipeDTO, artisan: Artisan): RecipeDTO {
         val recipe = recipeRepository.save(
             Recipe(

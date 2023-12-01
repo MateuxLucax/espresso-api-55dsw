@@ -31,6 +31,13 @@ interface RecipeRepository: JpaRepository<Recipe, Long> {
     @Query("""
         SELECT *
           FROM recipe
+         WHERE artisan_id = :artisanId
+    """, nativeQuery = true)
+    fun findAllFromArtisan(artisanId: Long): List<Recipe>
+
+    @Query("""
+        SELECT *
+          FROM recipe
          WHERE public = true
     """, nativeQuery = true)
     fun findAllPublic(): List<Recipe>
