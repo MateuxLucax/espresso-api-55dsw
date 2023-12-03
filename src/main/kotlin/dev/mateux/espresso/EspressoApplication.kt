@@ -9,9 +9,9 @@ import org.springframework.security.core.Authentication
 class EspressoApplication
 
 fun main(args: Array<String>) {
-	runApplication<EspressoApplication>(*args)
+    runApplication<EspressoApplication>(*args)
 }
 
 fun Authentication.toArtisan(): Artisan {
-	return principal as Artisan
+    return principal as Artisan
 }

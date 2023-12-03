@@ -11,4 +11,5 @@ data class RecipeDTO(
     val steps: List<RecipeStepDTO>,
     val public: Boolean,
     val owner: String,
+    val favorite: Boolean? = false,
 )

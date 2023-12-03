@@ -14,21 +14,21 @@ class ArtisanFavorite(
     @Column(updatable = false, unique = true, nullable = false)
     val id: Long? = null,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artisan_id", referencedColumnName = "id", nullable = false, updatable = false)
     val artisan: Artisan,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", referencedColumnName = "id", nullable = false, updatable = false)
     val recipe: Recipe,
 
     @Column(nullable = false, name = "created_at")
     @CreatedDate
-    val createdDate: Instant,
+    val createdDate: Instant? = Instant.now(),
 
     @Column(nullable = false, name = "updated_at")
     @LastModifiedDate
-    val updatedAt: Instant,
+    val updatedAt: Instant? = Instant.now()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

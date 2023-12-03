@@ -1,7 +1,10 @@
 package dev.mateux.espresso.controller
 
+import dev.mateux.espresso.dto.artisan.favorite.ArtisanFavoriteDTO
 import dev.mateux.espresso.dto.recipe.CreateRecipeDTO
 import dev.mateux.espresso.dto.recipe.RecipeDTO
+import dev.mateux.espresso.dto.recipe.note.DeleteRecipeNoteDTO
+import dev.mateux.espresso.dto.recipe.note.RecipeNoteDTO
 import dev.mateux.espresso.service.RecipeService
 import dev.mateux.espresso.toArtisan
 import org.springframework.http.HttpStatus
@@ -56,6 +59,50 @@ class RecipeController(
         }
     }
 
+    @PutMapping("{id}/favorite")
+    fun setRecipeAsFavorite(
+        @PathVariable(required = true) id: String,
+        authentication: Authentication
+    ): ArtisanFavoriteDTO {
+        try {
+            return recipeService.setRecipeAsFavorite(id.toLong(), authentication.toArtisan())
+        } catch (e: Exception) {
+            if (e.message == "Recipe not found.") {
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Recipe not found. Please try again."
+                )
+            } else {
+                throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Unable to favorite recipe. Please try again."
+                )
+            }
+        }
+    }
+
+    @DeleteMapping("{id}/favorite")
+    fun unsetRecipeAsFavorite(
+        @PathVariable(required = true) id: String,
+        authentication: Authentication
+    ): ArtisanFavoriteDTO {
+        try {
+            return recipeService.unsetRecipeAsFavorite(id.toLong(), authentication.toArtisan())
+        } catch (e: Exception) {
+            if (e.message == "Recipe not found.") {
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Recipe not found. Please try again."
+                )
+            } else {
+                throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Unable to unset recipe as favorite. Please try again."
+                )
+            }
+        }
+    }
+
     @GetMapping("all")
     fun getAll(authentication: Authentication): List<RecipeDTO> {
         try {
@@ -79,6 +126,85 @@ class RecipeController(
                 HttpStatus.BAD_REQUEST,
                 "Unable to get recipes. Please try again."
             )
+        }
+    }
+
+    @GetMapping("{id}/note")
+    fun getRecipeNotes(
+        @PathVariable(required = true) id: String,
+        authentication: Authentication
+    ): List<RecipeNoteDTO> {
+        try {
+            val artisanId = authentication.toArtisan().id ?: throw Exception("Artisan not found.")
+            return recipeService.recipeNotes(id.toLong(), artisanId)
+        } catch (e: Exception) {
+            if (e.message == "Recipe not found.") {
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Recipe not found. Please try again."
+                )
+            } else {
+                throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Unable to get recipe notes. Please try again."
+                )
+            }
+        }
+    }
+
+    @PostMapping("{id}/note")
+    fun addRecipeNote(
+        @RequestBody body: Map<String, String>,
+        @PathVariable(required = true) id: String,
+        authentication: Authentication
+    ): RecipeNoteDTO {
+        try {
+            val artisanId = authentication.toArtisan().id ?: throw Exception("Artisan not found.")
+            return recipeService.addRecipeNote(
+                recipeId = id.toLong(),
+                text = body["text"] ?: throw Exception("Text not found."),
+                artisanId = artisanId
+            )
+        } catch (e: Exception) {
+            if (e.message == "Recipe not found.") {
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Recipe not found. Please try again."
+                )
+            } else {
+                throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Unable to add recipe note. Please try again."
+                )
+            }
+        }
+    }
+
+    @DeleteMapping("{id}/note/{noteId}")
+    fun deleteRecipeNote(
+        @PathVariable(required = true) id: String,
+        @PathVariable(required = true) noteId: String,
+        authentication: Authentication
+    ): DeleteRecipeNoteDTO {
+        try {
+            val artisanId = authentication.toArtisan().id ?: throw Exception("Artisan not found.")
+            return recipeService.deleteRecipeNote(
+                recipeNoteId = noteId.toLong(),
+                artisanId = artisanId,
+                recipeId = id.toLong()
+            )
+        } catch (e: Exception) {
+            if (e.message == "Recipe note not found.") {
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Recipe note not found. Please try again."
+                )
+            } else {
+                throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Unable to delete recipe note. Please try again."
+                )
+            }
         }
     }
 }

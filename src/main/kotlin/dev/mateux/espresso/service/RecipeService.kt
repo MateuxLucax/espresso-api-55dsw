@@ -1,14 +1,21 @@
 package dev.mateux.espresso.service
 
 import dev.mateux.espresso.domain.artisan.Artisan
+import dev.mateux.espresso.domain.artisan.favorite.ArtisanFavorite
+import dev.mateux.espresso.domain.artisan.favorite.ArtisanFavoriteRepository
 import dev.mateux.espresso.domain.method.BrewMethod
 import dev.mateux.espresso.domain.method.BrewMethodRepository
 import dev.mateux.espresso.domain.recipe.Recipe
 import dev.mateux.espresso.domain.recipe.RecipeRepository
+import dev.mateux.espresso.domain.recipe.note.RecipeNote
+import dev.mateux.espresso.domain.recipe.note.RecipeNoteRepository
 import dev.mateux.espresso.domain.recipe.step.RecipeStep
 import dev.mateux.espresso.domain.recipe.step.RecipeStepRepository
+import dev.mateux.espresso.dto.artisan.favorite.ArtisanFavoriteDTO
 import dev.mateux.espresso.dto.recipe.CreateRecipeDTO
 import dev.mateux.espresso.dto.recipe.RecipeDTO
+import dev.mateux.espresso.dto.recipe.note.DeleteRecipeNoteDTO
+import dev.mateux.espresso.dto.recipe.note.RecipeNoteDTO
 import dev.mateux.espresso.dto.recipe.step.RecipeStepDTO
 import org.springframework.stereotype.Service
 import java.util.*
@@ -17,14 +24,15 @@ import java.util.*
 class RecipeService(
     private val recipeRepository: RecipeRepository,
     private val recipeStepRepository: RecipeStepRepository,
-    private val brewMethodRepository: BrewMethodRepository
+    private val brewMethodRepository: BrewMethodRepository,
+    private val artisanFavoriteRepository: ArtisanFavoriteRepository,
+    private val recipeNoteRepository: RecipeNoteRepository
 ) {
     fun getById(id: Long, artisanId: Long): RecipeDTO {
         val recipe = recipeRepository.findByIdAndArtisan(id, artisanId) ?: throw Exception("Recipe not found.")
         val steps = recipeStepRepository.findByRecipeId(id)
 
-        return RecipeDTO(
-            id = recipe.id.toString(),
+        return RecipeDTO(id = recipe.id.toString(),
             title = recipe.title,
             description = recipe.description,
             method = recipe.method.title,
@@ -39,15 +47,14 @@ class RecipeService(
             },
             public = recipe.public,
             owner = recipe.owner.id.toString(),
-        )
+            favorite = artisanFavoriteRepository.findByArtisanIdAndRecipeId(artisanId, id) != null)
     }
 
     fun getAll(artisanId: Long): List<RecipeDTO> {
         val recipes = recipeRepository.findAllPublicAndFromArtisan(artisanId)
 
         return recipes.map { recipe ->
-            RecipeDTO(
-                id = recipe.id.toString(),
+            RecipeDTO(id = recipe.id.toString(),
                 title = recipe.title,
                 description = recipe.description,
                 method = recipe.method.title,
@@ -55,7 +62,11 @@ class RecipeService(
                 steps = listOf(),
                 public = recipe.public,
                 owner = recipe.owner.id.toString(),
-            )
+                favorite = recipe.id?.let {
+                    artisanFavoriteRepository.findByArtisanIdAndRecipeId(
+                        artisanId, it
+                    ) != null
+                })
         }
     }
 
@@ -72,6 +83,11 @@ class RecipeService(
                 steps = listOf(),
                 public = recipe.public,
                 owner = recipe.owner.id.toString(),
+                favorite = recipe.id?.let {
+                    artisanFavoriteRepository.findByArtisanIdAndRecipeId(artisanId,
+                        it
+                    ) != null
+                }
             )
         }
     }
@@ -92,10 +108,7 @@ class RecipeService(
             val (quantity, quantityType) = extractQuantityAndType(step)
 
             RecipeStep(
-                quantity = quantity,
-                quantityType = quantityType,
-                description = step,
-                recipe = recipe
+                quantity = quantity, quantityType = quantityType, description = step, recipe = recipe
             )
         }
 
@@ -118,7 +131,7 @@ class RecipeService(
             public = recipe.public,
             owner = recipe.owner.id.toString(),
         )
-   }
+    }
 
     fun getMethod(method: String): BrewMethod {
         return brewMethodRepository.getBySimilarityName(method) ?: throw Exception("Brew method not found")
@@ -134,5 +147,82 @@ class RecipeService(
         } else {
             Pair(0.toFloat(), "")
         }
+    }
+
+    fun setRecipeAsFavorite(id: Long, artisan: Artisan): ArtisanFavoriteDTO {
+        if (artisan.id == null) throw Exception("Artisan not found.")
+
+        val recipe = recipeRepository.findByIdAndArtisan(id, artisan.id) ?: throw Exception("Recipe not found.")
+        if (recipe.id == null) throw Exception("Recipe not found.")
+
+        val alreadyFavorite = artisanFavoriteRepository.findByArtisanIdAndRecipeId(artisan.id, recipe.id) != null
+        if (alreadyFavorite) return ArtisanFavoriteDTO(success = true)
+
+        return artisanFavoriteRepository.save(
+            ArtisanFavorite(
+                artisan = artisan, recipe = recipe
+            )
+        ).let {
+            ArtisanFavoriteDTO(
+                success = true
+            )
+        }
+    }
+
+    fun unsetRecipeAsFavorite(id: Long, artisan: Artisan): ArtisanFavoriteDTO {
+        if (artisan.id == null) throw Exception("Artisan not found.")
+
+        val recipe = recipeRepository.findByIdAndArtisan(id, artisan.id) ?: throw Exception("Recipe not found.")
+        if (recipe.id == null) throw Exception("Recipe not found.")
+
+        if (artisanFavoriteRepository.findByArtisanIdAndRecipeId(artisan.id, recipe.id) == null) {
+            return ArtisanFavoriteDTO(success = true)
+        }
+
+        val didRemove =  artisanFavoriteRepository.deleteByArtisanIdAndRecipeId(artisan.id, recipe.id)
+        return ArtisanFavoriteDTO(success = didRemove == 1)
+    }
+
+    fun recipeNotes(recipeId: Long, artisanId: Long): List<RecipeNoteDTO> {
+        val recipe = recipeRepository.findByIdAndArtisan(recipeId, artisanId) ?: throw Exception("Recipe not found.")
+        if (recipe.id == null) throw Exception("Recipe not found.")
+
+        val notes = recipeNoteRepository.findByRecipeAndArtisanId(recipeId, artisanId)
+
+        return notes.map { note ->
+            RecipeNoteDTO(
+                id = note.id.toString(),
+                text = note.text,
+                owner = note.owner.id.toString(),
+                recipe = note.recipe.id.toString(),
+                createdAt = note.createdDate.toString()
+            )
+        }
+    }
+
+    fun addRecipeNote(recipeId: Long, text: String, artisanId: Long): RecipeNoteDTO {
+        val recipe = recipeRepository.findByIdAndArtisan(recipeId, artisanId) ?: throw Exception("Recipe not found.")
+        if (recipe.id == null) throw Exception("Recipe not found.")
+
+        val note = recipeNoteRepository.save(
+            RecipeNote(
+                text = text, recipe = recipe, owner = recipe.owner
+            )
+        )
+
+        return RecipeNoteDTO(
+            id = note.id.toString(),
+            text = note.text,
+            owner = note.owner.id.toString(),
+            recipe = note.recipe.id.toString(),
+            createdAt = note.createdDate.toString()
+        )
+    }
+
+    fun deleteRecipeNote(recipeNoteId: Long, artisanId: Long, recipeId: Long): DeleteRecipeNoteDTO {
+        recipeNoteRepository.findByIdArtisanIdRecipeId(recipeNoteId, artisanId, recipeId) ?: throw Exception("Recipe note not found.")
+
+        recipeNoteRepository.deleteById(recipeNoteId)
+        return DeleteRecipeNoteDTO(success = true)
     }
 }

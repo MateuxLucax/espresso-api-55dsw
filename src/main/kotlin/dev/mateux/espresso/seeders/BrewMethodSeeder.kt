@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @Suppress("unused")
 class BrewMethodSeeder(
     @Autowired
-    private val brewMethodRepository: BrewMethodRepository
+    private val repository: BrewMethodRepository
 ) : CommandLineRunner {
     companion object {
         val brewMethods = listOf(
@@ -26,9 +26,9 @@ class BrewMethodSeeder(
     }
 
     override fun run(vararg args: String) {
-        val count = brewMethodRepository.count()
+        val count = repository.count()
         if (count > 0) return
 
-        brewMethodRepository.saveAll(brewMethods)
+        repository.saveAll(brewMethods)
     }
 }

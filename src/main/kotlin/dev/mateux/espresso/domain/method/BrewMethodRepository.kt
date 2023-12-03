@@ -5,13 +5,12 @@ import org.springframework.data.jpa.repository.Query
 
 interface BrewMethodRepository: JpaRepository<BrewMethod, Long> {
     @Query("""
-        SELECT id,
-               title,
-               similarity(title, :name) AS similarity
+        SELECT *,
+               similarity(title, :title) AS similarity
           FROM brew_method
-         WHERE similarity(title, :name) > 0.3
-      ORDER BY 3 DESC
+         WHERE similarity(title, :title) > 0.3
+      ORDER BY similarity DESC
          LIMIT 1
     """, nativeQuery = true)
-    fun getBySimilarityName(name: String): BrewMethod?
+    fun getBySimilarityName(title: String): BrewMethod?
 }

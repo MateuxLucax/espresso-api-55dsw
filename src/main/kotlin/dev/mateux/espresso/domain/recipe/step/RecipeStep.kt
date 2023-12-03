@@ -2,6 +2,9 @@ package dev.mateux.espresso.domain.recipe.step
 
 import dev.mateux.espresso.domain.recipe.Recipe
 import jakarta.persistence.*
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import java.time.Instant
 
 @Entity(name = "recipe_step")
 class RecipeStep(
@@ -13,20 +16,23 @@ class RecipeStep(
     @Column(nullable = false, columnDefinition = "TEXT")
     val description: String,
 
-    /**
-     * Quantity and QuantityType are nullable because it is not a given. We will try to find this values in the description with regex or another algorithm.
-     * Like: "1 cup of flour" or "1 cup flour" then we will extract the quantity and the quantity type as quantity: 1, quantityType: cup
-     * If we can't find it, we will set it to null and the frontend will have to handle it.
-     */
     @Column(nullable = true)
-    val quantity: Float,
+    val quantity: Float? = null,
 
     @Column(nullable = true, name = "quantity_type")
-    val quantityType: String,
+    val quantityType: String? = null,
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "recipe_id", referencedColumnName = "id", nullable = false, updatable = false)
     val recipe: Recipe,
+
+    @Column(nullable = false, name = "created_at")
+    @CreatedDate
+    val createdDate: Instant? = Instant.now(),
+
+    @Column(nullable = false, name = "updated_at")
+    @LastModifiedDate
+    val updatedAt: Instant? = Instant.now(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

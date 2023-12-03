@@ -4,6 +4,9 @@ import dev.mateux.espresso.domain.artisan.Artisan
 import dev.mateux.espresso.domain.method.BrewMethod
 import jakarta.persistence.*
 import jakarta.validation.constraints.Size
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import java.time.Instant
 
 @Entity
 class Recipe(
@@ -22,16 +25,24 @@ class Recipe(
     @Column(columnDefinition = "BOOLEAN DEFAULT false")
     val public: Boolean,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brew_method_id", referencedColumnName = "id", nullable = false, updatable = false)
     val method: BrewMethod,
 
     @Column(nullable = false)
     val servings: Int,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artisan_id", referencedColumnName = "id", nullable = false, updatable = false)
     val owner: Artisan,
+
+    @CreatedDate
+    @Column(nullable = false, name = "created_at")
+    val createdDate: Instant? = Instant.now(),
+
+    @LastModifiedDate
+    @Column(nullable = false, name = "updated_at")
+    val updatedAt: Instant? = Instant.now(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

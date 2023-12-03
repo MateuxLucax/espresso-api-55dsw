@@ -2,9 +2,12 @@ package dev.mateux.espresso.domain.artisan
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.Size
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import java.time.Instant
 
 @Entity
 class Artisan(
@@ -28,6 +31,14 @@ class Artisan(
     @Column(nullable = false)
     @Size(min = 2, max = 255, message = "Salt must be between 2 and 255 characters")
     val salt: String,
+
+    @Column(nullable = false, name = "created_at")
+    @CreatedDate
+    val createdDate: Instant? = Instant.now(),
+
+    @Column(nullable = false, name = "updated_at")
+    @LastModifiedDate
+    val updatedAt: Instant? = Instant.now(),
 ): UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return mutableListOf(

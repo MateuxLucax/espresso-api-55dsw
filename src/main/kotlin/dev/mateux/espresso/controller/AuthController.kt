@@ -18,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException
 @Suppress("unused")
 class AuthController(
     private val artisanService: ArtisanService,
-    private val hashService: HashService,
     private val tokenService: TokenService
 ) {
     @PostMapping("login")
@@ -29,7 +28,7 @@ class AuthController(
                 "Email not found. Please check your email and try again."
             )
 
-        val isPasswordValid = hashService.validateArtisan(artisan, payload.password)
+        val isPasswordValid = HashService.validateArtisan(artisan, payload.password)
 
         if (isPasswordValid) {
             return LoginResponseDTO(
@@ -45,14 +44,6 @@ class AuthController(
 
     @PostMapping("register")
     fun register(@RequestBody payload: RegisterDTO): LoginResponseDTO {
-        val passwordRegex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}\$")
-        if (!passwordRegex.matches(payload.password)) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character."
-            )
-        }
-
         val emailRegex = Regex("^[A-Za-z0-9+_.-]+@(.+)\$")
         if (!emailRegex.matches(payload.email)) {
             throw ResponseStatusException(
@@ -69,8 +60,8 @@ class AuthController(
             )
         }
 
-        val salt = hashService.generateSalt()
-        val hashedPassword = hashService.hashPassword(payload.email, payload.password, salt)
+        val salt = HashService.generateSalt()
+        val hashedPassword = HashService.hashPassword(payload.email, payload.password, salt)
         val newArtisan = artisanService.createArtisan(
             email = payload.email,
             password = hashedPassword,
