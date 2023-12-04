@@ -1,0 +1,967 @@
+{
+	"info": {
+		"_postman_id": "35a3e2fe-ff79-4a03-931d-cfbbfc03675d",
+		"name": "espresso",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20744673"
+	},
+	"item": [
+		{
+			"name": "/",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Schema is valid\", function () {",
+							"  var schema = {",
+							"    type: \"object\",",
+							"    properties: {",
+							"      version: {",
+							"        type: \"string\"",
+							"      }",
+							"    },",
+							"    required: [\"version\"],",
+							"  };",
+							"",
+							"  var response = pm.response.json();",
+							"  pm.expect(tv4.validate(response, schema)).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.version).to.exist.and.to.be.a('string');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Version is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.version).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response time is less than 500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(500);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response headers contain the expected content type\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response body is in valid JSON format\", function () {",
+							"    pm.response.to.have.jsonBody();",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/auth/register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token is present in the response\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.token).to.exist;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token should not be empty\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token is in a valid format\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.match(/[A-Za-z0-9-_]+.[A-Za-z0-9-_]+.[A-Za-z0-9-_]+/);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"joseph.cooper@mail.com\",\n    \"name\": \"Joseph A. Cooper\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/auth/login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token is present in the response\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.token).to.exist;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token should not be empty\");",
+							"});",
+							"",
+							"pm.test(\"Token is in a valid format\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.match(/[A-Za-z0-9-_]+.[A-Za-z0-9-_]+.[A-Za-z0-9-_]+/);",
+							"});",
+							"",
+							"pm.test(\"Set token as environment variable\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.match(/[A-Za-z0-9-_]+.[A-Za-z0-9-_]+.[A-Za-z0-9-_]+/);",
+							"    pm.collectionVariables.set('token', responseData.token);",
+							"    pm.expect(pm.collectionVariables.get('token')).to.exist.and.to.be.a('string').and.to.be.equals(responseData.token)",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"joseph.cooper@mail.com\",\n    \"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Café AeroPress\",\n    \"description\": \"Experimente a intensidade e os sabores robustos de um café expresso preparado com a AeroPress. Nesta receita rápida e simples, uma mistura cuidadosamente moída de café é combinada com água quente, resultando em uma xícara rica e encorpada. A preparação meticulosa, incluindo a infusão controlada e a extração suave, destaca as nuances do café, proporcionando uma experiência intensa e satisfatória. Aproveite o equilíbrio perfeito entre força e suavidade, criando um café expresso que despertará seus sentidos a cada gole. Uma jornada aromática e envolvente, perfeita para os amantes do café que buscam uma experiência expressa e excepcional.\",\n    \"method\": \"Aeropress\",\n    \"cups\": 1,\n    \"public\": true,\n    \"steps\": [\n        \"Aqueça 200 ml de água até atingir cerca de 85-90°C. Evite usar água fervente para não comprometer o sabor.\",\n        \"Insira um filtro de papel no suporte da AeroPress e fixe-o na câmara.\",\n        \"Coloque 25g de café moído na câmara da AeroPress.\",\n        \"Despeje a água quente sobre o café moído e mexa por 10 segundos.\",\n        \"Fixe o êmbolo e deixe o café em infusão por cerca de 1 minutos.\",\n        \"Pressione o êmbolo lentamente para baixo até que o café seja totalmente extraído.\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/recipe",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/{id}/note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token is present in the response\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.token).to.exist;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token should not be empty\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token is in a valid format\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.token).to.exist.and.to.be.a('string').and.to.match(/[A-Za-z0-9-_]+.[A-Za-z0-9-_]+.[A-Za-z0-9-_]+/);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\": \"A moagem média-fina é crucial para o sucesso desta receita. Ajuste a moagem conforme necessário para garantir uma extração adequada.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/recipe/1/note",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"1",
+						"note"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/recipe/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/{id}/note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/recipe/1/note",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"1",
+						"note"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/{id}/favorite",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/recipe/1/favorite",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"1",
+						"favorite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Café AeroPress\",\n    \"description\": \"Experimente a intensidade e os sabores robustos de um café expresso preparado com a AeroPress. Nesta receita rápida e simples, uma mistura cuidadosamente moída de café é combinada com água quente, resultando em uma xícara rica e encorpada. A preparação meticulosa, incluindo a infusão controlada e a extração suave, destaca as nuances do café, proporcionando uma experiência intensa e satisfatória. Aproveite o equilíbrio perfeito entre força e suavidade, criando um café expresso que despertará seus sentidos a cada gole. Uma jornada aromática e envolvente, perfeita para os amantes do café que buscam uma experiência expressa e excepcional.\",\n    \"method\": \"Aeropress\",\n    \"cups\": 1,\n    \"public\": true,\n    \"steps\": [\n        \"Aqueça 200 ml de água até atingir cerca de 85-90°C. Evite usar água fervente para não comprometer o sabor.\",\n        \"Insira um filtro de papel no suporte da AeroPress e fixe-o na câmara.\",\n        \"Coloque 25g de café moído na câmara da AeroPress.\",\n        \"Despeje a água quente sobre o café moído e mexa por 10 segundos.\",\n        \"Fixe o êmbolo e deixe o café em infusão por cerca de 1 minutos.\",\n        \"Pressione o êmbolo lentamente para baixo até que o café seja totalmente extraído.\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/recipe/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/{id}/favorite",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/recipe/1/favorite",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"1",
+						"favorite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/recipe/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/{id}/note/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/recipe/1/note/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"1",
+						"note",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/all",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/recipe/all",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/recipe/mine",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/recipe/mine",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"recipe",
+						"mine"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/public/recipe/{id}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/public/recipe/3",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"public",
+						"recipe",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/public/recipe/all",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/public/recipe/all",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"public",
+						"recipe",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/artisan/me",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/artisan/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"artisan",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/artisan/all",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/artisan/all",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"artisan",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/brew/methods",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/brew/methods",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"brew",
+						"methods"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNYXRldXMgTHVjYXMgQ3J1eiBCcmFuZHQiLCJleHAiOjE2OTczOTEwODcsImlhdCI6MTY5NzMwNDY4NywidXVpZCI6Ijk4MTc4ODgyLWRjMDgtNDFlNi04NTM0LWFjNjNlYTA2OGExMiJ9.uOntcpmNJWd7g7TV5bCWgyrWGOPw_YqId3jeak2CWZ8",
+			"type": "string"
+		}
+	]
+}
