@@ -221,10 +221,11 @@ class RecipeService(
         )
     }
 
+    @Transactional
     fun deleteRecipeNote(recipeNoteId: Long, artisanId: Long, recipeId: Long): DeleteRecipeNoteDTO {
         recipeNoteRepository.findByIdArtisanIdRecipeId(recipeNoteId, artisanId, recipeId) ?: throw Exception("Recipe note not found.")
 
-        recipeNoteRepository.deleteById(recipeNoteId)
+        recipeNoteRepository.deleteByIdArtisanIdRecipeId(recipeNoteId, artisanId, recipeId)
         return DeleteRecipeNoteDTO(success = true)
     }
 

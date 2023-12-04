@@ -30,4 +30,13 @@ interface RecipeNoteRepository: JpaRepository<RecipeNote, Long> {
          WHERE recipe_id = :recipeId
     """, nativeQuery = true)
     fun deleteByRecipeId(recipeId: Long): Int
+
+    @Modifying
+    @Query("""
+        DELETE FROM recipe_note
+         WHERE id = :id
+           AND artisan_id = :artisanId
+           AND recipe_id = :recipeId
+    """, nativeQuery = true)
+    fun deleteByIdArtisanIdRecipeId(id: Long, artisanId: Long, recipeId: Long): Int
 }

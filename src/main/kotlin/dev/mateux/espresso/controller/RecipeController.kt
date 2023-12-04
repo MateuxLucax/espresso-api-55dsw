@@ -125,7 +125,7 @@ class RecipeController(
                 throw ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "Recipe not found. Please try again."
-                )git add
+                )
             } else {
                 throw ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
