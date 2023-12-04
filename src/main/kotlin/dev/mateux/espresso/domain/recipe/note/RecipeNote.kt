@@ -17,11 +17,11 @@ class RecipeNote(
     @Column(nullable = false, columnDefinition = "TEXT")
     val text: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id", referencedColumnName = "id", nullable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinColumn(name = "recipe_id", referencedColumnName = "id", nullable = false, updatable = false, )
     val recipe: Recipe,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "artisan_id", referencedColumnName = "id", nullable = false, updatable = false)
     val owner: Artisan,
 

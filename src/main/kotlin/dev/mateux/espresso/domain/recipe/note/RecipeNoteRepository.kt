@@ -1,6 +1,7 @@
 package dev.mateux.espresso.domain.recipe.note
 
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
 interface RecipeNoteRepository: JpaRepository<RecipeNote, Long> {
@@ -22,4 +23,11 @@ interface RecipeNoteRepository: JpaRepository<RecipeNote, Long> {
       ORDER BY created_at DESC
     """, nativeQuery = true)
     fun findByRecipeAndArtisanId(recipeId: Long, artisanId: Long): List<RecipeNote>
+
+    @Modifying
+    @Query("""
+        DELETE FROM recipe_note
+         WHERE recipe_id = :recipeId
+    """, nativeQuery = true)
+    fun deleteByRecipeId(recipeId: Long): Int
 }

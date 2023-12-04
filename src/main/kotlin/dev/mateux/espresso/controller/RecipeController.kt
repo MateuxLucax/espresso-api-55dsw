@@ -2,6 +2,7 @@ package dev.mateux.espresso.controller
 
 import dev.mateux.espresso.dto.artisan.favorite.ArtisanFavoriteDTO
 import dev.mateux.espresso.dto.recipe.CreateRecipeDTO
+import dev.mateux.espresso.dto.recipe.DeleteRecipeDTO
 import dev.mateux.espresso.dto.recipe.RecipeDTO
 import dev.mateux.espresso.dto.recipe.note.DeleteRecipeNoteDTO
 import dev.mateux.espresso.dto.recipe.note.RecipeNoteDTO
@@ -59,6 +60,59 @@ class RecipeController(
         }
     }
 
+    @PutMapping("{id}")
+    fun updateRecipe(
+        @PathVariable(required = true) id: String,
+        @RequestBody recipeDTO: CreateRecipeDTO,
+        authentication: Authentication
+    ): RecipeDTO {
+        try {
+            val artisanId = authentication.toArtisan().id ?: throw Exception("Artisan not found.")
+            return recipeService.updateRecipe(id.toLong(), artisanId, recipeDTO)
+        } catch (e: Exception) {
+            when (e.message) {
+                "Recipe not found." -> {
+                    throw ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Recipe not found. Please try again."
+                    )
+                }
+                "Brew method not found" -> {
+                    throw ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Brew method not found. Please try again."
+                    )
+                }
+                else -> {
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Unable to update recipe. Please try again."
+                    )
+                }
+            }
+        }
+    }
+
+    @DeleteMapping("{id}")
+    fun deleteRecipe(@PathVariable(required = true) id: String, authentication: Authentication): DeleteRecipeDTO {
+        try {
+            val artisanId = authentication.toArtisan().id ?: throw Exception("Artisan not found.")
+            return recipeService.deleteRecipe(id.toLong(), artisanId)
+        } catch (e: Exception) {
+            if (e.message == "Recipe not found.") {
+                throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Recipe not found. Please try again."
+                )
+            } else {
+                throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Unable to delete recipe. Please try again."
+                )
+            }
+        }
+    }
+
     @PutMapping("{id}/favorite")
     fun setRecipeAsFavorite(
         @PathVariable(required = true) id: String,
@@ -71,7 +125,7 @@ class RecipeController(
                 throw ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "Recipe not found. Please try again."
-                )
+                )git add
             } else {
                 throw ResponseStatusException(
                     HttpStatus.BAD_REQUEST,

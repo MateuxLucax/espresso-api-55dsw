@@ -13,11 +13,13 @@ import dev.mateux.espresso.domain.recipe.step.RecipeStep
 import dev.mateux.espresso.domain.recipe.step.RecipeStepRepository
 import dev.mateux.espresso.dto.artisan.favorite.ArtisanFavoriteDTO
 import dev.mateux.espresso.dto.recipe.CreateRecipeDTO
+import dev.mateux.espresso.dto.recipe.DeleteRecipeDTO
 import dev.mateux.espresso.dto.recipe.RecipeDTO
 import dev.mateux.espresso.dto.recipe.note.DeleteRecipeNoteDTO
 import dev.mateux.espresso.dto.recipe.note.RecipeNoteDTO
 import dev.mateux.espresso.dto.recipe.step.RecipeStepDTO
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -224,5 +226,63 @@ class RecipeService(
 
         recipeNoteRepository.deleteById(recipeNoteId)
         return DeleteRecipeNoteDTO(success = true)
+    }
+
+    @Transactional
+    fun deleteRecipe(recipeId: Long, artisanId: Long): DeleteRecipeDTO {
+        val recipe = recipeRepository.findByIdAndArtisan(recipeId, artisanId) ?: throw Exception("Recipe not found.")
+        if (recipe.id == null) throw Exception("Recipe not found.")
+
+        recipeNoteRepository.deleteByRecipeId(recipeId)
+        recipeStepRepository.deleteByRecipeId(recipeId)
+        recipeRepository.deleteById(recipeId)
+        return DeleteRecipeDTO(success = true)
+    }
+
+    @Transactional
+    fun updateRecipe(recipeId: Long, artisanId: Long, dto: CreateRecipeDTO): RecipeDTO {
+        val recipe = recipeRepository.findByIdAndArtisan(recipeId, artisanId) ?: throw Exception("Recipe not found.")
+        if (recipe.id == null) throw Exception("Recipe not found.")
+
+        val updatedRecipe = recipe.copy(
+            title = dto.title,
+            description = dto.description,
+            servings = dto.cups,
+            public = dto.public,
+            method = getMethod(dto.method),
+        )
+
+        recipeRepository.save(updatedRecipe)
+
+        recipeStepRepository.deleteByRecipeId(recipeId)
+
+        val steps = dto.steps.map { step ->
+            val (quantity, quantityType) = extractQuantityAndType(step)
+
+            RecipeStep(
+                quantity = quantity, quantityType = quantityType, description = step, recipe = recipe
+            )
+        }
+
+        recipeStepRepository.saveAll(steps)
+
+        return RecipeDTO(
+            id = updatedRecipe.id.toString(),
+            title = updatedRecipe.title,
+            description = updatedRecipe.description,
+            method = updatedRecipe.method.title,
+            cups = updatedRecipe.servings,
+            steps = steps.map { step ->
+                RecipeStepDTO(
+                    id = step.id.toString(),
+                    description = step.description,
+                    quantity = step.quantity,
+                    unit = step.quantityType,
+                )
+            },
+            public = updatedRecipe.public,
+            owner = updatedRecipe.owner.id.toString(),
+            favorite = artisanFavoriteRepository.findByArtisanIdAndRecipeId(artisanId, recipeId) != null
+        )
     }
 }

@@ -44,6 +44,29 @@ class Recipe(
     @Column(nullable = false, name = "updated_at")
     val updatedAt: Instant? = Instant.now(),
 ) {
+    fun copy(
+        title: String = this.title,
+        description: String = this.description,
+        public: Boolean = this.public,
+        method: BrewMethod = this.method,
+        servings: Int = this.servings,
+        owner: Artisan = this.owner,
+        createdDate: Instant? = this.createdDate,
+        updatedAt: Instant? = this.updatedAt,
+    ): Recipe {
+        return Recipe(
+            id = this.id,
+            title = title,
+            description = description,
+            public = public,
+            method = method,
+            servings = servings,
+            owner = owner,
+            createdDate = createdDate,
+            updatedAt = updatedAt,
+        )
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

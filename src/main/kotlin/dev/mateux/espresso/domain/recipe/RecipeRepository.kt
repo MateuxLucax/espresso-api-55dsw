@@ -25,6 +25,7 @@ interface RecipeRepository: JpaRepository<Recipe, Long> {
           FROM recipe
          WHERE artisan_id = :artisanId
            AND ((public = true) OR (public = false AND artisan_id = :artisanId))
+      ORDER BY created_at DESC
     """, nativeQuery = true)
     fun findAllPublicAndFromArtisan(artisanId: Long): List<Recipe>
 
@@ -32,6 +33,7 @@ interface RecipeRepository: JpaRepository<Recipe, Long> {
         SELECT *
           FROM recipe
          WHERE artisan_id = :artisanId
+      ORDER BY created_at DESC
     """, nativeQuery = true)
     fun findAllFromArtisan(artisanId: Long): List<Recipe>
 
@@ -39,6 +41,7 @@ interface RecipeRepository: JpaRepository<Recipe, Long> {
         SELECT *
           FROM recipe
          WHERE public = true
+      ORDER BY created_at DESC
     """, nativeQuery = true)
     fun findAllPublic(): List<Recipe>
 }
